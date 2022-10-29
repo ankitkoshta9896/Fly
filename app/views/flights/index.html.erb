@@ -1,0 +1,119 @@
+<body class="h-14 bg-gradient-to-r from-cyan-400 to-blue-500">
+<div class="container mx-auto px-5 mt-48 flex justify-between">
+  <%= form_with(method: "get") do |form| %>
+  <div class="flex-col space-y-4 ">
+    <h1 class="font-mono text-8xl mb-28"> 
+      
+      <div class="text-yellow-400">FLY</div>
+    </h1>
+    <div class="flex space-x-4">
+      <div class="flex items-center"> 
+        <div>
+          <i class="fa-solid fa-plane-departure"></i> 
+          <%= form.label :departure_airport, "From", class: "font-bold font-mono text-xl"%><br>
+          <%= form.select(:departure_airport, options_for_select(@departing_flights), {}, {class: "text-xl w-full pl-0 bg-transparent border-0 border-b-2 border-black focus:outline-none focus:ring-0 focus:border-black font-mono"}) %>
+        </div>
+      </div>
+      <div class="flex items-center">
+        <div>
+          <i class="fa-solid fa-plane-arrival"></i> 
+          <%= form.label :arrival_airport, "To", class: "font-bold font-mono text-xl" %><br>
+          <%= form.select(:arrival_airport, options_for_select(@arriving_flights), {}, {class: "text-xl w-full pl-0 bg-transparent border-0 border-b-2 border-black focus:outline-none focus:ring-0 focus:border-black font-mono"}) %>
+        </div>
+      </div>
+      <div class="flex items-center ">
+        <div>
+          <div class="flex items-center">
+            <i class="fa-solid fa-user-group"></i>
+            <%= form.label :passengers, "Passengers", class: "font-mono font-bold ml-1 text-xl" %>
+          </div>
+          <%= form.select(:passengers, [1, 2, 3, 4], {}, {class: "text-xl w-full pl-0 bg-transparent border-0 border-b-2 border-black focus:outline-none focus:ring-0 focus:border-black font-mono"}) %>
+        </div>
+      </div>
+      <div class="flex items-center">
+        <div>
+          <i class="fa-solid fa-calendar"></i> 
+          <%= form.label :date, "Date", class: "font-bold font-mono text-xl" %><br>
+          <%= form.select(:date, options_for_select(@date_options), {}, {class: "text-xl w-full pl-0 bg-transparent border-0 border-b-2 border-black focus:outline-none focus:ring-0 focus:border-black font-mono"}) %>
+        </div>
+      </div>
+    </div>
+    <%= form.submit "Search", class:"focus:outline-none bg-yellow-400 hover:bg-yellow-500 focus:ring-2 focus:ring-yellow-300 font-medium rounded-lg px-5 py-2.5 mr-2 mb-2 dark:focus:ring-yellow-900 font-mono"%>
+    <% end %>
+  </div>
+  <% unless @search_results == nil %>
+    <%= form_with url: new_booking_path, method: "get", class:"flex-col justify-content-between" do |form| %>
+      <% if @search_results.empty? %>
+          <p class="font-mono">So sorry, we couldn't find any available flight matching your criteria.</p>
+      <%else%>
+          <% @search_results.each do |result| %>
+            <div class="overflow-x-auto relative shadow-md sm:rounded-lg mt-4">
+              
+                    <td class="p-4 w-4">
+                      </td>
+                      <td scope="row" class="bg-white border-b dark:bg-gray-500 dark:border-gray-800 hover:bg-gray-50 dark:hover:bg-gray-400">
+                             ✈︎ <%= result.departure_airport.airport_code %>-<%= result.arrival_airport.airport_code %> ✈︎
+                      </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="overflow-x-auto relative shadow-md sm:rounded-lg mt-4">
+              <table class="w-full text-left text-gray-500 dark:text-gray-400">
+                <thead class="text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                  <tr>
+                    <th scope="col" class="p-4">
+                    </th>
+                    <th scope="col" class="py-3 px-6 ">
+                       Departure Date
+                    </th>
+                    <th scope="col" class="py-3 px-6 ">
+                      Departure Time
+                    </th>
+                    <th scope="col" class="py-3 px-6 ">
+                      Arrival Time
+                    </th>
+                    <th scope="col" class="py-3 px-6 ">
+                      Duration
+                    </th>
+                    <th scope="col" class="py-3 px-6 ">
+                      Price
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
+                    <td class="p-4 w-4">
+                      <div class="flex items-center">
+                        <%= form.radio_button :flight_id, result.id%>
+                      </div>
+                      </td>
+                      <td scope="row" class="py-4 px-6 text-gray-600 whitespace-nowrap">
+                        <%= result.takeoff_date%>
+                      </td>
+                      <td class="py-4 px-6 text-gray-600 whitespace-nowrap">
+                        <%= result.takeoff_time %> am
+                      </td>
+                      <td class="py-4 px-6 text-gray-600 whitespace-nowrap">
+                        <%= result.arrival_time %> am
+                      </td>
+                      <td class="py-4 px-6 text-gray-600 whitespace-nowrap">
+                        <%= result.duration %> hr
+                      </td>
+                      <td class="py-4 px-6 text-gray-600 whitespace-nowrap">
+                        <%= result.price %> 
+                      </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          <% end %>   
+          <div>
+            <%= form.hidden_field :passengers, value: params[:passengers] %>
+            <%= form.submit "Choose this flight", class:"focus:outline-none bg-yellow-400 hover:bg-yellow-500 focus:ring-2 focus:ring-yellow-300 font-medium rounded-lg  px-5 py-2.5 mt-4 dark:focus:ring-yellow-900 font-mono" %>
+          </div>
+      <% end %>
+    <% end %>
+  <%end%>
+</div>
+</body>
